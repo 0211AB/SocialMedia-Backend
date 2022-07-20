@@ -33,15 +33,17 @@ exports.likePost = async (req, res) => {
       { new: true }
     );
 
-    if (liked) res.status(200).json({ Message: "Post liked succesfully" });
+    // console.log(liked)
+    if (liked) return res.status(200).json({ Message: "Post liked succesfully" });
 
     res.json({ Error: "Unexpected Error.Please try again" });
   } catch (e) {
+    // console.log(e)
     res.status(404).json({ Error: "Unexpected Error.Please try again" });
   }
 };
 
-exports.commentPost = exports.comment = async (req, res) => {
+exports.commentPost = async (req, res) => {
   try {
     const comment = { Text: req.body.text, PostedBy: req.user._id };
     const updatedPost = await Post.findByIdAndUpdate(

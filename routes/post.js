@@ -48,9 +48,14 @@ router.post(
   controller.createPost
 );
 
-router.put("/like", auth, controller.likePost);
+router.put("/like-post", auth, controller.likePost);
 
-router.put("/update/:postId", auth, upload.single("image"),controller.updatePost);
+router.put(
+  "/update/:postId",
+  auth,
+  upload.single("image"),
+  controller.updatePost
+);
 
 router.delete("/delete/:postId", auth, controller.deletePost);
 

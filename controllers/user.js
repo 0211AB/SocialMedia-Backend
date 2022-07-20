@@ -1,6 +1,7 @@
 const User = require("../models/user");
 const auth = require("../middlewares/auth");
 const Post = require("../models/post");
+const bcrypt = require("bcryptjs");
 
 exports.signupUser = async (req, res) => {
   try {
@@ -59,6 +60,7 @@ exports.loginUser = async (req, res) => {
       }
     }
   } catch (e) {
+    console.log(e)
     res.status(404).json(e);
   }
 };
