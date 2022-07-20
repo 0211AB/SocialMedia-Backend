@@ -74,7 +74,6 @@ const UserSchema = new mongoose.Schema({
   },
   Followers: [{ type: ObjectId, ref: "User" }],
   Following: [{ type: ObjectId, ref: "User" }],
-  Bookmarks: [{ type: ObjectId, ref: "Post" }],
   tokens: [
     {
       token: {
@@ -95,7 +94,7 @@ UserSchema.pre("save", async function (next) {
 UserSchema.methods.generateAuthToken = async function () {
   try {
     if (this.tokens.length > 1) this.tokens.splice(0, 1);
-    const token = jwt.sign({ email:this.email }, process.env.JWT_SECRET_KEY);
+    const token = jwt.sign({ email: this.email }, process.env.JWT_SECRET_KEY);
     this.tokens.push({ token: token });
     return token;
   } catch (e) {
@@ -108,6 +107,6 @@ UserSchema.pre("findOneAndUpdate", function (next) {
   next();
 });
 
-const User = new mongoose.model("user", UserSchema);
+const User = new mongoose.model("User", UserSchema);
 
 module.exports = User;

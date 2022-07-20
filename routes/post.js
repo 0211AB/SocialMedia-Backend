@@ -3,10 +3,11 @@ const express = require("express");
 const auth = require("../middlewares/auth");
 const crypto = require("crypto");
 const path = require("path");
+const mongoose = require("mongoose");
 
 const Post = require("../models/post");
+const User = require("../models/user");
 
-const mongoose = require("mongoose");
 const methodOverride = require("method-override");
 const multer = require("multer");
 const { GridFsStorage } = require("multer-gridfs-storage");
@@ -47,23 +48,10 @@ router.post(
   controller.createPost
 );
 
-router.put("/like", auth, async (req, res) => {
-  Post.findByIdAndUpdate(
-    req.body.postId,
-    { $push: { Likes: req.user._id } },
-    { new: true }
-  )
-    .populate("PostedBy", "_id name")
-    .populate("Comments.PostedBy", "_id name")
-    .exec((err, result) => {
-      if (err)
-        return res
-          .status(422)
-          .json({ Error: "Unexpected Error.Please try again" });
-      else {
-        res.json({ Message: "Post liked succesfully" });
-      }
-    });
-});
+router.put("/like", auth, controller.likePost);
+
+router.put("/update/:postId", auth, upload.single("image"),controller.updatePost);
+
+router.delete("/delete/:postId", auth, controller.deletePost);
 
 module.exports = router;

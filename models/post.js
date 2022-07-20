@@ -11,6 +11,9 @@ const postSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    HashTag: {
+      type: String,
+    },
     Photo: {
       type: Schema.Types.ObjectId,
       ref: "uploads.files",
