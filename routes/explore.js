@@ -10,6 +10,4 @@ const controller = require("../controllers/explore");
 
 router.get("/explore", auth, controller.explorePosts);
 
-//router.get("/explore/random", auth, controller.exploreRandomPosts);
-
 module.exports = router;

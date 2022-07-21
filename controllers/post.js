@@ -53,7 +53,7 @@ exports.commentPost = async (req, res) => {
       },
       { new: true }
     );
-    if (updatedPost) res.status(200).json({ Message: "Commented succesfully" });
+    if (updatedPost) return res.status(200).json({ Message: "Commented succesfully" });
     res.json({ Error: "Unexpected Error.Please try again" });
   } catch (e) {
     res.status(404).json({ Error: "Unexpected Error.Please try again" });
@@ -62,7 +62,9 @@ exports.commentPost = async (req, res) => {
 
 exports.deletePost = async (req, res) => {
   try {
-    const post = Post.findOne({ _id: req.params.postId });
+    
+    const post = await Post.findOne({ _id: req.params.postId });
+
     if (!post) return res.status(422).json({ Error: "No such post found" });
 
     if (post.PostedBy._id.toString() !== req.user._id.toString())
@@ -71,7 +73,7 @@ exports.deletePost = async (req, res) => {
         .json({ Error: "You are not the author of this post." });
 
     const remPost = await post.remove();
-    if (remPost) res.json({ Message: "Post removed sucessfully!!" });
+    if (remPost) return res.json({ Message: "Post removed sucessfully!!" });
     res.json({ Error: "Unexpected Error.Please try again" });
   } catch (e) {
     res.json({ Error: "Unexpected Error.Please try again" });
