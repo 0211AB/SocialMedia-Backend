@@ -5,10 +5,6 @@ const crypto = require("crypto");
 const path = require("path");
 const mongoose = require("mongoose");
 
-const Post = require("../models/post");
-const User = require("../models/user");
-
-const methodOverride = require("method-override");
 const multer = require("multer");
 const { GridFsStorage } = require("multer-gridfs-storage");
 const router = new express.Router();

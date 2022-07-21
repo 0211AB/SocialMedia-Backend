@@ -1,10 +1,7 @@
 const Post = require("../models/post");
-const User = require("../models/user");
 
 exports.createPost = async (req, res) => {
   try {
-    // console.log(req.file.id);
-    // console.log(req.body.title);
     const { title, body } = req.body;
     if (!title || !body)
       return res
@@ -17,7 +14,6 @@ exports.createPost = async (req, res) => {
       PostedBy: req.user,
     });
 
-    // console.log(post)
     const saved_post = await post.save();
     if (saved_post) res.json({ message: "Post created successfully" });
   } catch (e) {
@@ -33,12 +29,10 @@ exports.likePost = async (req, res) => {
       { new: true }
     );
 
-    // console.log(liked)
     if (liked) return res.status(200).json({ Message: "Post liked succesfully" });
 
     res.json({ Error: "Unexpected Error.Please try again" });
   } catch (e) {
-    // console.log(e)
     res.status(404).json({ Error: "Unexpected Error.Please try again" });
   }
 };
@@ -82,7 +76,6 @@ exports.deletePost = async (req, res) => {
 
 exports.updatePost = async (req, res) => {
   try {
-    // console.log(req.file.id);
     const post = await Post.findOne({ _id: req.params.postId });
     if (!post) return res.status(422).json({ Error: "No such post found" });
 
@@ -92,12 +85,10 @@ exports.updatePost = async (req, res) => {
         .json({ Error: "You are not the author of this post." });
 
     const { title, body } = req.body;
-    // console.log(body);
     post.Title = title !== null ? title : post.Title;
     post.Body = body !== null ? body : post.Body;
     post.Photo = req.file !== null ? req.file.id : post.Photo;
     const saved_post = await post.save();
-    // console.log(saved_post)
     if (saved_post) res.json({ message: "Post updated successfully" });
   } catch (e) {
     console.log(e)

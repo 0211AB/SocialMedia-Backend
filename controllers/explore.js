@@ -1,5 +1,3 @@
-const User = require("../models/user");
-const auth = require("../middlewares/auth");
 const Post = require("../models/post");
 
 exports.explorePosts = async (req, res) => {

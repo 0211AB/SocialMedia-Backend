@@ -1,5 +1,4 @@
 const User = require("../models/user");
-const auth = require("../middlewares/auth");
 const Post = require("../models/post");
 const bcrypt = require("bcryptjs");
 
@@ -20,14 +19,11 @@ exports.signupUser = async (req, res) => {
     }
     var user = new User(reqBody);
     const token = await user.generateAuthToken();
-    //console.log(token)
 
     const saved_user = await user.save();
-    //console.log(saved_user)
 
     res.status(201).json({ Message: "User Sign Up Succesful" });
   } catch (e) {
-    // console.log(e);
     if (e.code == 11000)
       return res
         .status(400)
@@ -46,13 +42,10 @@ exports.loginUser = async (req, res) => {
     if (!user) res.status(404).json({ Error: "User not found" });
     else {
       const isPasswordValid = await bcrypt.compare(password, user.password);
-      //console.log(isPasswordValid)
 
       if (isPasswordValid) {
-        //console.log(user.tokens)
         const token = await user.generateAuthToken();
         const saved_user = await user.save();
-        //console.log(saved_user)
 
         res.status(200).json({ Message: "Login Successful" });
       } else {
