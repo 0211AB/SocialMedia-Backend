@@ -22,7 +22,11 @@ const storage = new GridFsStorage({
   file: (req, file) => {
     return new Promise((resolve, reject) => {
       crypto.randomBytes(16, (err, buff) => {
-        if (err) return reject(err);
+        if (err) 
+        {
+          console.log(err)
+          return reject(err);
+        }
 
         const filename = buff.toString("hex") + path.extname(file.originalname);
         const fileInfo = {
@@ -40,7 +44,7 @@ const upload = multer({ storage });
 router.post(
   "/create-post",
   auth,
-  upload.single("image"),
+  upload.array("image"),
   controller.createPost
 );
 
@@ -49,7 +53,7 @@ router.put("/like-post", auth, controller.likePost);
 router.put(
   "/update/:postId",
   auth,
-  upload.single("image"),
+  upload.array("image"),
   controller.updatePost
 );
 

@@ -11,6 +11,7 @@ exports.explorePosts = async (req, res) => {
     .limit(10)
     .then((data) => {
       let posts = [];
+      console.log(data)
       data.map((item) => {
         const likes=item.Likes
         var likedByMe=false
@@ -24,7 +25,7 @@ exports.explorePosts = async (req, res) => {
           Title: item.Title,
           Body: item.Body,
           PostedBy: item.PostedBy,
-          Photo: item.Photo,
+          Photos: item.Photos,
           Likes: item.Likes,
           LikedByMe:likedByMe,
           Comments: item.Comments,

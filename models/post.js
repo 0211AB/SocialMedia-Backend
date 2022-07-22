@@ -14,17 +14,19 @@ const postSchema = new mongoose.Schema(
     HashTag: {
       type: String,
     },
-    Photo: {
-      type: Schema.Types.ObjectId,
-      ref: "uploads.files",
-    },
+    Photos: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: "uploads.files",
+      },
+    ],
     PostedBy: {
       type: Schema.Types.ObjectId,
       ref: "User",
     },
-    private :{
-        type:Boolean,
-        default:false
+    private: {
+      type: Boolean,
+      default: false,
     },
     Likes: [{ type: Schema.Types.ObjectId, ref: "User" }],
     Comments: [

@@ -1,8 +1,7 @@
 const User = require("../models/user");
 const Post = require("../models/post");
 const bcrypt = require("bcryptjs");
-const mongoose=require('mongoose')
-
+var ObjectId = require("mongodb").ObjectId;
 
 exports.signupUser = async (req, res) => {
   try {
@@ -55,7 +54,7 @@ exports.loginUser = async (req, res) => {
       }
     }
   } catch (e) {
-    console.log(e)
+    console.log(e);
     res.status(404).json(e);
   }
 };
@@ -116,67 +115,58 @@ exports.followUser = (req, res) => {
   );
 };
 
-exports.unfollowUser = (req, res) => {
-  User.findByIdAndUpdate(
-    mongoose.Types.ObjectId(req.body.unfollowId),
-    {
-      $pull: { Following: req.user._id },
-    },
-    {
-      new: true,
-    },
-    (err, result) => {
-      if (err) {
-        console.log(err);
-        return res
-          .status(422)
-          .json({ Error: "Unexpected Error .Please try again" });
-      }
-      User.findByIdAndUpdate(
-        req.user._id,
-        {
-          $pull: { Followers: mongoose.Types.ObjectId(req.body.unfollowId) },
-        },
-        { new: true }
-      )
-        .then((result) => {
-          res.json({ Message: "Unfollowed Sucesfully!!" });
-        })
-        .catch((err) => {
-          console.log(err);
-          return res
-            .status(422)
-            .json({ Error: "Unexpected Error .Please try again" });
-        });
-    }
-  );
+exports.unfollowUser = async (req, res) => {
+  try {
+    const user1 = await User.findOneAndUpdate(
+      { _id: req.body.unfollowId },
+      { $pull: { Followers: req.user._id } }
+    );
+
+    if (!user1)
+      return res
+        .status(422)
+        .json({ Error: "Unexpected Error .Please try again" });
+
+    const saved_user1 = await user1.save();
+
+    const user2 = await User.findOneAndUpdate(
+      { _id: req.user._id },
+      { $pull: { Following: req.body.unfollowId } }
+    );
+
+    if (!user2)
+      return res
+        .status(422)
+        .json({ Error: "Unexpected Error .Please try again" });
+
+    const saved_user2 = await user2.save();
+
+    res.json({ Message: "UnFollowed Sucessfully!!" });
+  } catch (e) {
+    return res
+      .status(422)
+      .json({ Error: "Unexpected Error .Please try again" });
+  }
 };
 
 exports.userProfile = async (req, res) => {
   try {
-    var likes=[]
-    var count=0
+    var likes = [];
+    var count = 0;
     Post.aggregate([
-      { $match: { PostedBy: req.user._id }},
+      { $match: { PostedBy: req.user._id } },
       {
         $redact: {
-          $cond: [
-            { $gte: [{ $size: "$Likes" }, 1] },
-            "$$KEEP",
-            "$$PRUNE",
-          ],
+          $cond: [{ $gte: [{ $size: "$Likes" }, 1] }, "$$KEEP", "$$PRUNE"],
         },
       },
     ]).exec((err, users) => {
       if (err) throw err;
 
-      for(var user of users)
-        for(var like of user.Likes)
-            likes.push(like)
-
+      for (var user of users) for (var like of user.Likes) likes.push(like);
     });
 
-    var postCount = await Post.count({PostedBy: req.user._id});
+    var postCount = await Post.count({ PostedBy: req.user._id });
 
     const user = {
       name: req.user.name,
@@ -186,12 +176,11 @@ exports.userProfile = async (req, res) => {
       email: req.user.email,
       followerCount: req.user.Followers.length,
       followingCount: req.user.Following.length,
-      listOfUsersLikedmyPosts:likes,
-      postCount
+      listOfUsersLikedmyPosts: likes,
+      postCount,
     };
 
-    res.status(200).json({user})
-    
+    res.status(200).json({ user });
   } catch (e) {
     console.log(e);
   }
