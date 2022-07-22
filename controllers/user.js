@@ -1,6 +1,7 @@
 const User = require("../models/user");
 const Post = require("../models/post");
 const bcrypt = require("bcryptjs");
+const mongoose=require('mongoose')
 
 
 exports.signupUser = async (req, res) => {
@@ -117,7 +118,7 @@ exports.followUser = (req, res) => {
 
 exports.unfollowUser = (req, res) => {
   User.findByIdAndUpdate(
-    req.body.unfollowId,
+    mongoose.Types.ObjectId(req.body.unfollowId),
     {
       $pull: { Following: req.user._id },
     },
@@ -134,7 +135,7 @@ exports.unfollowUser = (req, res) => {
       User.findByIdAndUpdate(
         req.user._id,
         {
-          $pull: { Followers: req.body.unfollowId },
+          $pull: { Followers: mongoose.Types.ObjectId(req.body.unfollowId) },
         },
         { new: true }
       )
