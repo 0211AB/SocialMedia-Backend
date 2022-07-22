@@ -2,7 +2,7 @@ const Post = require("../models/post");
 
 exports.explorePosts = async (req, res) => {
   var pageNo = req.query.page !== undefined ? req.query.page : 0;
-  console.log(pageNo)
+  // console.log(pageNo)
   Post.find({ PostedBy: { $ne: req.user._id }, private: "false" })
     .populate("PostedBy", "_id name")
     .populate("Comments.PostedBy", "_id name")
@@ -11,7 +11,6 @@ exports.explorePosts = async (req, res) => {
     .limit(10)
     .then((data) => {
       let posts = [];
-      console.log(data)
       data.map((item) => {
         const likes=item.Likes
         var likedByMe=false
